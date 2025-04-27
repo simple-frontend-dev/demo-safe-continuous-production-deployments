@@ -21,7 +21,6 @@ jobs:
           echo "github event:"
           echo "  workflow: ${{ github.workflow }}"
           echo "  ref: ${{ github.ref }}"
-          echo "  event: ${{ toJSON(github.event) }}"
 
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
