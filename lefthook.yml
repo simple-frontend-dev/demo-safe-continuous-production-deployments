@@ -1,0 +1,6 @@
+pre-push:
+  parallel: true
+  commands:
+    format:
+      tags: code-quality
+      run: pnpm exec prettier --check --ignore-unknown src

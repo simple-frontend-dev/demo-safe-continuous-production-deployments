@@ -1,0 +1,36 @@
+name: deploy-previews-vercel
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Deploy-Preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log github event
+        run: |
+          echo "github event:"
+          echo "  workflow: ${{ github.workflow }}"
+          echo "  ref: ${{ github.ref }}"
+          echo "  event: ${{ github.event }}"
+
+      - uses: actions/checkout@v4
+
+      - name: Pull Vercel Environment Information
+        run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
