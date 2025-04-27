@@ -22,7 +22,7 @@ jobs:
           echo "github event:"
           echo "  workflow: ${{ github.workflow }}"
           echo "  ref: ${{ github.ref }}"
-          echo "  event: ${{ github.event }}"
+          echo "  event: ${{ toJSON(github.event) }}"
 
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -38,4 +38,6 @@ jobs:
         run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
-        run: npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
