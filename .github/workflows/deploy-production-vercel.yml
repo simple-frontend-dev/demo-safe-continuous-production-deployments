@@ -38,6 +38,7 @@ jobs:
         run: pnpm run e2e
         env:
           BASE_URL: ${{ steps.deploy-preview-production.outputs.DEPLOYMENT_URL }}
+          PUBLIC_ENV: preview-production
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
       # build and deploy project artifacts for production env

@@ -31,4 +31,5 @@ jobs:
         run: pnpm run e2e
         env:
           BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          PUBLIC_ENV: preview
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}

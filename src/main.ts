@@ -6,8 +6,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <h1>Safe Continuous Production Deployments</h1>
     <h2>Simple Frontend demo</h2>
-    <p class="highlight">
+    <h3 class="highlight">
       Environment: ${environment}
-    </p>
+    </h3>
   </div>
 `;
