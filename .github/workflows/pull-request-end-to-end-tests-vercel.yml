@@ -1,4 +1,4 @@
-name: pull-request-end-to-end-tests-workflow
+name: Pull Request End to End Tests
 
 on:
   deployment_status:
@@ -13,19 +13,22 @@ jobs:
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:
-      - name: Log github event
-        env:
-          GITHUB_EVENT: ${{ toJson(github.event) }}
-        run: echo "$GITHUB_EVENT"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-
-      - name: Simulate pull requests end-to-end tests
-        run: |
-          echo "Demo pull-requests-end-to-end-tests"
-          echo url deployment_status: "${{ github.event.deployment_status.environment_url }}"
-          echo url: "${{ github.event.deployment.url }}"
-          echo sha 0: ${{ github.sha }}
-          echo sha 2: ${{ github.event.deployment.git.sha }}
-          echo sha 3: "${{ github.event.client_payload.git.sha }}"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Environment URL
+        run: echo ${{ github.event.deployment_status.environment_url }}
+      - name: Run Playwright tests
+        run: pnpm run e2e
+        env:
+          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}

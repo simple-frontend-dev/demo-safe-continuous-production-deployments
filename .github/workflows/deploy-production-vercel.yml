@@ -1,4 +1,4 @@
-name: deploy-production-vercel
+name: Deploy Preview and Production Vercel
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -16,12 +16,6 @@ jobs:
   deploy-production:
     runs-on: ubuntu-latest
     steps:
-      - name: Log github event
-        run: |
-          echo "github event:"
-          echo "  workflow: ${{ github.workflow }}"
-          echo "  ref: ${{ github.ref }}"
-
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -29,13 +23,22 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
-      - name: Pull Vercel Environment Information
-        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      # build project artifacts with production env
+      - run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Build Project Artifacts
-        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy Project Artifacts to Vercel
+      - name: Deploy preview-production project artifacts to Vercel
+        id: deploy-preview-production
         run: |
-          DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
+          PREVIEW_DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --target=preview-production --token=${{ secrets.VERCEL_TOKEN }})
+          echo "PREVIEW_DEPLOYMENT_URL=$PREVIEW_DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      # Run end-to-end tests with Playwright
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run Playwright tests
+        run: pnpm run e2e
+        env:
+          BASE_URL: ${{ steps.deploy-preview-production.outputs.DEPLOYMENT_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
