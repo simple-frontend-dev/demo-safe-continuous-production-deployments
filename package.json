@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "node delay.js && tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "e2e": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",

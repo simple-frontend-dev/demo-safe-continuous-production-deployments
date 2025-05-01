@@ -1,11 +1,14 @@
 name: Continuous Integration Checks
+
 on:
   pull_request:
     branches:
       - main
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   quality-checks:
     runs-on: ubuntu-latest
@@ -18,5 +21,6 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install
+
       - name: Run code quality format check
         run: pnpm exec prettier --check --ignore-unknown src

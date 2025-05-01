@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   end-to-end-tests:
-    name: pull-request-end-to-end-tests-job
+    name: pull-request-end-to-end-tests
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:
@@ -21,12 +21,12 @@ jobs:
         with:
           node-version: lts/*
           cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
-      - name: Environment URL
-        run: echo ${{ github.event.deployment_status.environment_url }}
+
       - name: Run Playwright tests
         run: pnpm run e2e
         env:

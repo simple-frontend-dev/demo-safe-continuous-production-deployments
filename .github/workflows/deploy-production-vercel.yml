@@ -13,7 +13,7 @@ concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  deploy-production:
+  deploy-preview-and-production-vercel:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
