@@ -1,9 +1,7 @@
 name: pull-request-end-to-end-tests-workflow
 
 on:
-  repository_dispatch:
-    types:
-      - "vercel.deployment.success"
+  deployment_status:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,15 +10,22 @@ concurrency:
 jobs:
   end-to-end-tests:
     name: pull-request-end-to-end-tests-job
-    if: github.event_name == 'repository_dispatch'
+    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:
+      - name: Log github event
+        env:
+          GITHUB_EVENT: ${{ toJson(github.event) }}
+        run: echo "$GITHUB_EVENT"
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.client_payload.git.sha }}
+          ref: ${{ github.sha }}
 
       - name: Simulate pull requests end-to-end tests
         run: |
           echo "Demo pull-requests-end-to-end-tests"
-          echo sha: "${{ github.event.client_payload.git.sha }}"
-          echo url: "${{ github.event.client_payload.url }}"
+          echo url deployment_status: "${{ github.event.deployment_status.environment_url }}"
+          echo url: "${{ github.event.deployment.url }}"
+          echo sha 0: ${{ github.sha }}
+          echo sha 2: ${{ github.event.deployment.git.sha }}
+          echo sha 3: "${{ github.event.client_payload.git.sha }}"
