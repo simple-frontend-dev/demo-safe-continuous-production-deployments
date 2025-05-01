@@ -23,15 +23,13 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
-      # build project artifacts with production env
-      - run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy preview-production project artifacts to Vercel
-        id: deploy-preview-production
+      # build project artifacts and deploy to preview-production environment
+      - run: npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: pnpm run build
+      - id: deploy-preview-production
         run: |
           npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
-          PREVIEW_DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --prod --target=preview-production --token=${{ secrets.VERCEL_TOKEN }})
+          PREVIEW_DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --target=preview-production --token=${{ secrets.VERCEL_TOKEN }})
           echo "PREVIEW_DEPLOYMENT_URL=$PREVIEW_DEPLOYMENT_URL" >> $GITHUB_OUTPUT
 
       # Run end-to-end tests with Playwright
