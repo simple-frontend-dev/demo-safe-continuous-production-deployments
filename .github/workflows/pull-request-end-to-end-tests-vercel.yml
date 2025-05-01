@@ -1,13 +1,17 @@
-name: pull-requests-end-to-end-tests
+name: pull-request-end-to-end-tests-workflow
 
 on:
   repository_dispatch:
     types:
       - "vercel.deployment.success"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   end-to-end-tests:
-    name: pull-requests-end-to-end-tests
+    name: pull-request-end-to-end-tests-job
     runs-on: ubuntu-latest
     steps:
       - name: Simulate pull requests end-to-end tests
