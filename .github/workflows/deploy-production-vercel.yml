@@ -25,10 +25,9 @@ jobs:
 
       # build project artifacts with preview-production env
       - run: npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - run: npx vercel build --target=preview-production --token=${{ secrets.VERCEL_TOKEN }}
       - id: deploy-preview-production
         run: |
-          npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
           PREVIEW_DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --target=preview-production --token=${{ secrets.VERCEL_TOKEN }})
           echo "PREVIEW_DEPLOYMENT_URL=$PREVIEW_DEPLOYMENT_URL" >> $GITHUB_OUTPUT
 
