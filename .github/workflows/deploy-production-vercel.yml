@@ -23,7 +23,7 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
-      # build project artifacts with preview-production env
+      # build and deploy project artifacts for preview-production env
       - run: npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
       - run: npx vercel build --target=preview-production --token=${{ secrets.VERCEL_TOKEN }}
       - id: deploy-preview-production
@@ -39,3 +39,8 @@ jobs:
         env:
           BASE_URL: ${{ steps.deploy-preview-production.outputs.DEPLOYMENT_URL }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      # build and deploy project artifacts for production env
+      - run: npx vercel pull --yes --environment-production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: npx vercel build --target-production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: npx vercel deploy --prebuilt --target=production --token=${{ secrets.VERCEL_TOKEN }}
