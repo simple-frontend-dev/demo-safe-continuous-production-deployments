@@ -1,0 +1,14 @@
+name: integration-end-to-end-tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  deployment_status:
+
+jobs:
+  end-to-end-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Demo on deploy"
+        run: echo "Demo on deploy"
