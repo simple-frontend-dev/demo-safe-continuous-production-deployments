@@ -1,9 +1,6 @@
 name: pull-requests-end-to-end-tests
 
 on:
-  pull_request:
-    branches:
-      - main
   repository_dispatch:
     types:
       - "vercel.deployment.success"
