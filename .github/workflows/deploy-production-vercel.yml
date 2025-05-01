@@ -23,9 +23,9 @@ jobs:
           node-version: lts/*
           cache: pnpm
 
-      # build project artifacts and deploy to preview-production environment
+      # build project artifacts with preview-production env
       - run: npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: pnpm run build
+      - run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - id: deploy-preview-production
         run: |
           npx vercel pull --yes --environment=preview-production --token=${{ secrets.VERCEL_TOKEN }}
