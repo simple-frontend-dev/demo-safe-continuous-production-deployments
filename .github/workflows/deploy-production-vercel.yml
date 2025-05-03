@@ -1,0 +1,36 @@
+name: Deploy Preview and Production Vercel
+
+on:
+  deployment_status:
+
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy-preview-and-production-vercel:
+    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      # Run end-to-end tests with Playwright
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run Playwright tests
+        run: pnpm run e2e
+        env:
+          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          PUBLIC_ENV: production
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      # Promote deployment to production
+      - run: npx vercel promote ${{ github.event.deployment_status.environment_url }} --token=${{ secrets.VERCEL_TOKEN }}
