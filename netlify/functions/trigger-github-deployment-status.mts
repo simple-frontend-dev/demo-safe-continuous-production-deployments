@@ -1,18 +1,74 @@
+const GITHUB_API_ENDPOINT = "https://api.github.com/repos/simple-frontend-dev/demo-safe-continuous-production-deployments";
+const GITHUB_TOKEN = process.env.GITHUB_DEPLOYMENT_STATUS;
+
 export default async (req: Request) => {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
-    const payload = await req.json();
+    const { deploy_ssl_url, commit_ref, branch } = await req.json();
 
-    console.log("Webhook payload:", payload);
-    return new Response(`Hello, world!`);
+    if (!branch) {
+      console.error("Branch not found");
+      return new Response("Branch not found", { status: 400 });
+    }
+
+    if (branch !== "main") {
+      // Step 1: Create GitHub Deployment
+      const deployment = await fetch(`${GITHUB_API_ENDPOINT}/deployments`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+        body: JSON.stringify({
+          auto_merge: false,
+          ref: commit_ref,
+          environment: "preview",
+          production_environment: false,
+          required_contexts: [],
+          description: "Netlify branch preview",
+        }),
+      });
+
+      if (!deployment.ok) {
+        const errorText = await deployment.text();
+        console.error("GitHub deployment creation failed:", errorText);
+        return new Response(`GitHub deployment creation failed: ${errorText}`, {
+          status: 500,
+        });
+      }
+
+      const deploymentData = await deployment.json();
+
+      const status = await fetch(`${GITHUB_API_ENDPOINT}/${deploymentData.id}/statuses`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+        body: JSON.stringify({
+          state: "success",
+          description: "Netlify branch preview ready",
+          environment: "preview",
+          environment_url: deploy_ssl_url,
+          auto_inactive: false,
+        }),
+      });
+
+      if (!status.ok) {
+        const errorText = await status.text();
+        console.error("GitHub deployment status update failed:", errorText);
+        return new Response(`GitHub deployment status update failed: ${errorText}`, {
+          status: 500,
+        });
+      }
+    }
+
+    return new Response("Deployment status updated", { status: 200 });
   } catch (error) {
-    console.error("Webhook error:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Failed to send webhook" }),
-    };
+    console.error("Unable to update GitHub deployment status:", error);
+    return new Response("Unable to update GitHub deployment status", { status: 500 });
   }
 };
