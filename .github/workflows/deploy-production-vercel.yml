@@ -1,4 +1,4 @@
-name: Deploy Preview and Production Vercel
+name: Deploy Production Vercel
 
 on:
   repository_dispatch:
@@ -9,11 +9,10 @@ concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  deploy-preview-and-production-vercel:
+  deploy-production-vercel:
+    if: github.event.client_payload.environment == 'production'
     runs-on: ubuntu-latest
     steps:
-      - name: log github event
-        run: echo "${{ toJSON(github) }}"
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4

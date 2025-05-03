@@ -9,11 +9,9 @@ concurrency:
   group: ${{ github.workflow }}
 
 jobs:
-  deploy-preview-and-production-netlify:
+  deploy-production-netlify:
     runs-on: ubuntu-latest
     steps:
-      - name: log github event
-        run: echo "${{ toJSON(github) }}"
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4

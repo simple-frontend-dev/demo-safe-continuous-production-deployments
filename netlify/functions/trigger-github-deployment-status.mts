@@ -15,7 +15,7 @@ export default async (req: Request) => {
     }
 
     if (branch === "main") {
-      // for main branch, we will trigger a repository_dispatch event to avoid triggering this workflow to be skipped on branches
+      // for the main branch, we will trigger a repository_dispatch event to avoid triggering this workflow as skipped on pull requests
       const dispatch = await fetch(`${GITHUB_API_ENDPOINT}/dispatches`, {
         method: "POST",
         headers: {
