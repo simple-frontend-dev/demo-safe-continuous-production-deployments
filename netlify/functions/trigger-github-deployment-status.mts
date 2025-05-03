@@ -1,4 +1,4 @@
-const GITHUB_API_ENDPOINT = "https://api.github.com/repos/simple-frontend-dev/demo-safe-continuous-production-deployments";
+const GITHUB_API_ENDPOINT = "https://api.github.com/repos/simple-frontend-dev/safe-continuous-deployments";
 const GITHUB_TOKEN = process.env.GITHUB_DEPLOYMENT_STATUS;
 
 export default async (req: Request) => {

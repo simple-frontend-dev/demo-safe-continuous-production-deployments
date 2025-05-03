@@ -5,8 +5,8 @@ const sha = import.meta.env.PUBLIC_SHA;
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-    <h1>Safe Continuous Production Deployments</h1>
-    <h2>Simple Frontend demo</h2>
+    <h1>Safe Continuous Deployments</h1>
+    <h2>Simple Frontend Demo</h2>
     <h3 class="highlight">
       <span class="description">Environment: </span><span>${environment}</span>
     </h3>

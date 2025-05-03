@@ -1,7 +1,7 @@
 {
-  "name": "vite-typescript-starter",
+  "name": "@simple-frontend-dev/safe-continuous-deployments",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
