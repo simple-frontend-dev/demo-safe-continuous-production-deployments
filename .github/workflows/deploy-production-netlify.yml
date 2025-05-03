@@ -34,3 +34,9 @@ jobs:
 
       - name: log github event
         run: echo "${{ toJSON(github) }}"
+
+      # Promote deployment to production
+      - run: |
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" \
+          "https://api.netlify.com/api/v1/sites/${{ github.event.deployment.payload.site_id }}/deploys/${{ github.event.deployment.payload.deploy_id }}/restore"
