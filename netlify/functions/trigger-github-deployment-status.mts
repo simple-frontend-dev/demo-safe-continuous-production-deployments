@@ -14,11 +14,6 @@ export default async (req: Request) => {
       return new Response("Branch not found", { status: 400 });
     }
 
-    if (branch === "main") {
-      console.log("main preview deployment running!");
-      return new Response("Branch is main, skipping deployment", { status: 200 });
-    }
-
     // Step 1: Create GitHub Deployment
     const deployment = await fetch(`${GITHUB_API_ENDPOINT}/deployments`, {
       method: "POST",
@@ -29,7 +24,7 @@ export default async (req: Request) => {
       body: JSON.stringify({
         auto_merge: false,
         ref: commit_ref,
-        environment: "Preview",
+        environment: branch === "main" ? "Production-preview" : "Preview",
         production_environment: false,
         required_contexts: [],
         description: "Netlify branch preview",
@@ -56,7 +51,7 @@ export default async (req: Request) => {
       body: JSON.stringify({
         state: "success",
         description: "Netlify branch preview ready",
-        environment: "Preview",
+        environment: branch === "main" ? "Production-preview" : "Preview",
         environment_url: deploy_ssl_url,
         auto_inactive: false,
       }),
