@@ -1,14 +1,15 @@
 name: Deploy Production Netlify
 
 on:
-  deployment_status:
+  repository_dispatch:
+    types:
+      - "netlify.deployment.success"
 
 concurrency:
   group: ${{ github.workflow }}
 
 jobs:
   deploy-preview-and-production-netlify:
-    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production-preview-netlify'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,14 +26,11 @@ jobs:
       - name: Run Playwright tests
         run: pnpm run e2e
         env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          BASE_URL: ${{ github.event.client_payload.url }}
           PUBLIC_ENV: production
-
-      - name: log github event
-        run: echo "${{ toJSON(github) }}"
 
       # Promote deployment to production
       - run: |
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" \
-          "https://api.netlify.com/api/v1/sites/${{ github.event.deployment.payload.site_id }}/deploys/${{ github.event.deployment.payload.deploy_id }}/restore"
+          "https://api.netlify.com/api/v1/sites/${{ github.event.client_payload.site_id }}/deploys/${{ github.event.client_payload.deploy_id }}/restore"

@@ -14,6 +14,33 @@ export default async (req: Request) => {
       return new Response("Branch not found", { status: 400 });
     }
 
+    if (branch === "main") {
+      // for main branch, we will trigger a repository_dispatch event to avoid triggering this workflow to be skipped on branches
+      const dispatch = await fetch(`${GITHUB_API_ENDPOINT}/dispatches`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+        body: JSON.stringify({
+          event_type: "netlify.deployment.success",
+          client_payload: {
+            deploy_id: id,
+            site_id: site_id,
+            url: deploy_ssl_url,
+            environment: "Production-preview-netlify",
+          },
+        }),
+      });
+
+      if (!dispatch.ok) {
+        console.error("GitHub repository dispatch failed:", dispatch);
+        return new Response("GitHub repository dispatch failed", { status: 500 });
+      }
+
+      return new Response("GitHub repository dispatch triggered", { status: 200 });
+    }
+
     // Step 1: Create GitHub Deployment
     const deployment = await fetch(`${GITHUB_API_ENDPOINT}/deployments`, {
       method: "POST",
@@ -24,14 +51,10 @@ export default async (req: Request) => {
       body: JSON.stringify({
         auto_merge: false,
         ref: commit_ref,
-        environment: branch === "main" ? "Production-preview-netlify" : "Preview",
+        environment: "Preview",
         production_environment: false,
         required_contexts: [],
         description: "Netlify branch preview",
-        payload: {
-          deploy_id: id,
-          site_id: site_id,
-        },
       }),
     });
 
@@ -55,7 +78,7 @@ export default async (req: Request) => {
       body: JSON.stringify({
         state: "success",
         description: "Netlify branch preview ready",
-        environment: branch === "main" ? "Production-preview-netlify" : "Preview",
+        environment: "Preview",
         environment_url: deploy_ssl_url,
         auto_inactive: false,
       }),
