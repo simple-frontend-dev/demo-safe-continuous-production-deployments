@@ -1,4 +1,4 @@
-name: Pull Request End to End Tests
+name: End to End Tests Vercel
 
 on:
   deployment_status:
@@ -8,8 +8,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  end-to-end-tests:
-    name: pull-request-end-to-end-tests
+  e2e-vercel:
+    name: e2e-vercel
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:
