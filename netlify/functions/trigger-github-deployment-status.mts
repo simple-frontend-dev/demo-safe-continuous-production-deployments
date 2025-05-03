@@ -14,57 +14,60 @@ export default async (req: Request) => {
       return new Response("Branch not found", { status: 400 });
     }
 
-    if (branch !== "main") {
-      // Step 1: Create GitHub Deployment
-      const deployment = await fetch(`${GITHUB_API_ENDPOINT}/deployments`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: "application/vnd.github+json",
-        },
-        body: JSON.stringify({
-          auto_merge: false,
-          ref: commit_ref,
-          environment: "Preview",
-          production_environment: false,
-          required_contexts: [],
-          description: "Netlify branch preview",
-        }),
+    if (branch === "main") {
+      console.log("main preview deployment running!");
+      return new Response("Branch is main, skipping deployment", { status: 200 });
+    }
+
+    // Step 1: Create GitHub Deployment
+    const deployment = await fetch(`${GITHUB_API_ENDPOINT}/deployments`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: "application/vnd.github+json",
+      },
+      body: JSON.stringify({
+        auto_merge: false,
+        ref: commit_ref,
+        environment: "Preview",
+        production_environment: false,
+        required_contexts: [],
+        description: "Netlify branch preview",
+      }),
+    });
+
+    if (!deployment.ok) {
+      const errorText = await deployment.text();
+      console.error("GitHub deployment creation failed:", errorText);
+      return new Response(`GitHub deployment creation failed: ${errorText}`, {
+        status: 500,
       });
+    }
 
-      if (!deployment.ok) {
-        const errorText = await deployment.text();
-        console.error("GitHub deployment creation failed:", errorText);
-        return new Response(`GitHub deployment creation failed: ${errorText}`, {
-          status: 500,
-        });
-      }
+    const deploymentData = await deployment.json();
 
-      const deploymentData = await deployment.json();
+    // Step 2: Update GitHub Deployment Status
+    const status = await fetch(`${GITHUB_API_ENDPOINT}/deployments/${deploymentData.id}/statuses`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        Accept: "application/vnd.github+json",
+      },
+      body: JSON.stringify({
+        state: "success",
+        description: "Netlify branch preview ready",
+        environment: "Preview",
+        environment_url: deploy_ssl_url,
+        auto_inactive: false,
+      }),
+    });
 
-      // Step 2: Update GitHub Deployment Status
-      const status = await fetch(`${GITHUB_API_ENDPOINT}/deployments/${deploymentData.id}/statuses`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
-          Accept: "application/vnd.github+json",
-        },
-        body: JSON.stringify({
-          state: "success",
-          description: "Netlify branch preview ready",
-          environment: "Preview",
-          environment_url: deploy_ssl_url,
-          auto_inactive: false,
-        }),
+    if (!status.ok) {
+      const errorText = await status.text();
+      console.error("GitHub deployment status update failed:", errorText);
+      return new Response(`GitHub deployment status update failed: ${errorText}`, {
+        status: 400,
       });
-
-      if (!status.ok) {
-        const errorText = await status.text();
-        console.error("GitHub deployment status update failed:", errorText);
-        return new Response(`GitHub deployment status update failed: ${errorText}`, {
-          status: 400,
-        });
-      }
     }
 
     return new Response("Deployment status updated", { status: 200 });
