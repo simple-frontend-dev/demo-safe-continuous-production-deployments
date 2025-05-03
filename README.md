@@ -1,4 +1,4 @@
-# Simpel Frontend Safe Continuous Production Deployments Blueprint
+# Simple Frontend Safe Continuous Production Deployments Blueprint
 
 This demo repository cover the following use cases:
 
