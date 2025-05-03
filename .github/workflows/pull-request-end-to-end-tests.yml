@@ -4,7 +4,8 @@ on:
   deployment_status:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.deployment_status.description }}
+  # You do not need to have -${{ github.event.deployment_status.creator.login }} (I only have it because I want to run this workflow both for Vercel and Netlify)
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.deployment_status.creator.login }}
   cancel-in-progress: true
 
 jobs:
