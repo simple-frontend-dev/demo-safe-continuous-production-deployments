@@ -34,4 +34,4 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
       # Promote deployment to production
-      - run: npx vercel promote ${{ github.event.deployment_status.environment_url }} --scope=${{ secrets.VERCEL_PROJECT_ID }} --token=${{ secrets.VERCEL_TOKEN }}
+      - run: npx vercel promote ${{ github.event.deployment_status.environment_url }} --scope=${{ secrets.VERCEL_TEAM_SCOPE }} --token=${{ secrets.VERCEL_TOKEN }}
