@@ -16,6 +16,6 @@ I have written a [guide](https://www.simplefrontend.dev/docs/ci/automated-end-to
 
 ### Run end-to-end tests before deploying to production:
 
-Here my recommendation is to rely on Vercel `repository_dispatch` event
+Here my recommendation is to rely on Github `repository_dispatch` event which is also sent by Vercel.
 
 ## Netlify
