@@ -28,6 +28,7 @@ export default async (req: Request) => {
             deploy_id: id,
             site_id: site_id,
             url: deploy_ssl_url,
+            sha: commit_ref,
             environment: "Production-preview-netlify",
           },
         }),
@@ -55,6 +56,7 @@ export default async (req: Request) => {
         production_environment: false,
         required_contexts: [],
         description: "Netlify branch preview",
+        sha: commit_ref,
       }),
     });
 
