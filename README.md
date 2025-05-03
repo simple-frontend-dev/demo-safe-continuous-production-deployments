@@ -16,18 +16,6 @@ I have written a [guide](https://www.simplefrontend.dev/docs/ci/automated-end-to
 
 ### Run end-to-end tests before deploying to production:
 
-Here my recommendation is simply to go with a manual approach.
-
-1. Ignore production build step: in your Vercel project git settings, go to "Ignored Build Step" and change the behaviour to "Only build pre-production". This will ensure you are no automatically building and deploying to production after merges to your default branch
-
-2. Deploy manually with Github Actions. Vercel has a good guide [here](https://vercel.com/guides/how-can-i-use-github-actions-with-vercel):
-
-   2.1. First build and deploy to preview environment and capture the preview deployment url
-
-   2.2. Run your end-to-end tests against this preview deployment url
-
-   2.3. On success, build and deploy to production
-
-   I have an example in this demo repository: [deploy-production-vercel.yml](./.github/workflows/deploy-production-vercel.yml)
+Here my recommendation is to rely on Vercel `repository_dispatch` event
 
 ## Netlify
