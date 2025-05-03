@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:local": "PUBLIC_ENV=development BASE_URL=http://localhost:5173/ pnpm run e2e"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
