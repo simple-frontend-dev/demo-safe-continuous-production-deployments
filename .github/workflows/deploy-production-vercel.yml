@@ -23,6 +23,8 @@ jobs:
           cache: pnpm
 
       # Run end-to-end tests with Playwright
+      - name: Install dependencies
+        run: pnpm install
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
       - name: Run Playwright tests
