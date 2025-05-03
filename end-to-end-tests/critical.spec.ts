@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("is up and running", async ({ page }) => {
   const pageNavigation = await page.goto("/");
 
-  expect(pageNavigation?.status()).toBe(200);
+  expect(pageNavigation?.status()).toBe(201);
 });
 
 test("has correct title and environment", async ({ page }) => {
