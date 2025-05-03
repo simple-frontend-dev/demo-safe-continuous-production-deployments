@@ -8,10 +8,10 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <h1>Safe Continuous Production Deployments</h1>
     <h2>Simple Frontend demo</h2>
     <h3 class="highlight">
-      <span class="description">Environment:</span><span>${environment}</span>
+      <span class="description">Environment: </span><span>${environment}</span>
     </h3>
     <h3 class="highlight">
-      <span class="description">Deployed commit:</span><span class="commit-sha">${sha}</span>
+      <span class="description">Deployed commit: </span><span class="commit-sha">${sha}</span>
     </h3>
   </div>
 `;
