@@ -21,12 +21,11 @@ jobs:
         with:
           node-version: lts/*
           cache: "pnpm"
-
       - name: Install dependencies
         run: pnpm install
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
-
       - name: Run Playwright tests
         run: pnpm run e2e
         env:
