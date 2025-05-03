@@ -7,7 +7,7 @@ export default async (req: Request) => {
   }
 
   try {
-    const { deploy_ssl_url, commit_ref, branch } = await req.json();
+    const { deploy_ssl_url, commit_ref, branch, id, site_id } = await req.json();
 
     if (!branch) {
       console.error("Branch not found");
@@ -28,6 +28,10 @@ export default async (req: Request) => {
         production_environment: false,
         required_contexts: [],
         description: "Netlify branch preview",
+        payload: {
+          deploy_id: id,
+          site_id: site_id,
+        },
       }),
     });
 

@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   deploy-preview-and-production-netlify:
-    # if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production-preview-netlify'
+    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production-preview-netlify'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,3 +31,6 @@ jobs:
         env:
           BASE_URL: ${{ github.event.deployment_status.environment_url }}
           PUBLIC_ENV: production
+
+      - name: log github event
+        run: echo "${{ toJSON(github) }}"
