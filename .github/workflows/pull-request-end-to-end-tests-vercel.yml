@@ -4,7 +4,7 @@ on:
   deployment_status:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.deployment_status.description }}
   cancel-in-progress: true
 
 jobs:
@@ -13,6 +13,9 @@ jobs:
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:
+      - name: log github event
+        run: |
+          echo "github event: ${{ toJSON(github) }}"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}

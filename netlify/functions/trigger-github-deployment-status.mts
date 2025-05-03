@@ -42,6 +42,7 @@ export default async (req: Request) => {
 
       const deploymentData = await deployment.json();
 
+      // Step 2: Update GitHub Deployment Status
       const status = await fetch(`${GITHUB_API_ENDPOINT}/deployments/${deploymentData.id}/statuses`, {
         method: "POST",
         headers: {
