@@ -1,4 +1,4 @@
-name: End to End Tests Vercel
+name: End to End Tests Vercel/Netlify
 
 on:
   deployment_status:
@@ -8,8 +8,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  e2e-vercel:
-    name: e2e-vercel
+  e2e:
+    name: e2e
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:

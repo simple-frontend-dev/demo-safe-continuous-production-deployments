@@ -25,7 +25,7 @@ export default async (req: Request) => {
         body: JSON.stringify({
           auto_merge: false,
           ref: commit_ref,
-          environment: "preview",
+          environment: "Preview",
           production_environment: false,
           required_contexts: [],
           description: "Netlify branch preview",
@@ -42,7 +42,7 @@ export default async (req: Request) => {
 
       const deploymentData = await deployment.json();
 
-      const status = await fetch(`${GITHUB_API_ENDPOINT}/${deploymentData.id}/statuses`, {
+      const status = await fetch(`${GITHUB_API_ENDPOINT}/deployments/${deploymentData.id}/statuses`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${GITHUB_TOKEN}`,
@@ -51,7 +51,7 @@ export default async (req: Request) => {
         body: JSON.stringify({
           state: "success",
           description: "Netlify branch preview ready",
-          environment: "preview",
+          environment: "Preview",
           environment_url: deploy_ssl_url,
           auto_inactive: false,
         }),
@@ -61,7 +61,7 @@ export default async (req: Request) => {
         const errorText = await status.text();
         console.error("GitHub deployment status update failed:", errorText);
         return new Response(`GitHub deployment status update failed: ${errorText}`, {
-          status: 500,
+          status: 400,
         });
       }
     }
