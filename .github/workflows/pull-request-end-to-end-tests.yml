@@ -14,9 +14,6 @@ jobs:
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     steps:
-      - name: log github event
-        run: |
-          echo "github event: ${{ toJSON(github) }}"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}

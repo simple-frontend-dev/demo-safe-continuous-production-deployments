@@ -50,6 +50,16 @@ a:hover {
 }
 
 .highlight {
-  padding: 2em;
+  padding: 1em;
+  margin: 1em auto;
+  width: 500px;
   background-color: #1a1a1a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.commit-sha {
+  line-height: 1;
+  font-size: 0.6em;
 }
