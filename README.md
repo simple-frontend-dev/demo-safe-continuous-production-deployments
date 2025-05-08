@@ -4,7 +4,7 @@ This example repository covers the following use workflows:
 
 1. Run end-to-end tests after branch preview deployments to ensure your pull requests pass your critical tests and that your main branch remains stable. I chose Playwright as the end-to-end tests solution as it is reliable and efficient.
 
-2. After you have merged your changes to your main branch, it deploys a preview of your main branch, run your end-to-end tests against it and when they pass, it automatically deploys your changes to production.
+2. After you have merged your changes to your main branch, it deploys a preview of your main branch, run your end-to-end tests against it and when they pass, it automatically promote your changes to production.
 
 ## Vercel configuration
 
